@@ -18,7 +18,7 @@ import pt.amane.dscatalog.entities.Product;
 import pt.amane.dscatalog.repositories.CategoryRepository;
 import pt.amane.dscatalog.repositories.ProductRepository;
 import pt.amane.dscatalog.services.exceptions.DataBaseIntegrityViolationException;
-import pt.amane.dscatalog.services.exceptions.ObjectNotFoundException;
+import pt.amane.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class ProductService {
@@ -32,7 +32,7 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
 		Optional<Product> productId = repository.findById(id);
-		Product product = productId.orElseThrow(() -> new ObjectNotFoundException(
+		Product product = productId.orElseThrow(() -> new ResourceNotFoundException(
 				"Object not found! Id: " + id + ", Type: " + ProductDTO.class.getName()));
 		return new ProductDTO(product, product.getCategories());
 	}
@@ -59,7 +59,7 @@ public class ProductService {
 			product = repository.save(product);
 			return new ProductDTO(product);
 		} catch (EntityNotFoundException e) {
-			throw new ObjectNotFoundException("Id not found! Id: " + id + ", Type: " + ProductDTO.class.getName());
+			throw new ResourceNotFoundException("Id not found! Id: " + id + ", Type: " + ProductDTO.class.getName());
 		}
 
 	}
@@ -69,7 +69,7 @@ public class ProductService {
 		try {
 			repository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new ObjectNotFoundException("Id not found! Id: " + id);
+			throw new ResourceNotFoundException("Id not found! Id: " + id);
 		} catch (DataIntegrityViolationException e) {
 			throw new DataBaseIntegrityViolationException("category cannot be deleted! has associated object..");
 		}

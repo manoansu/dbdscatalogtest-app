@@ -16,7 +16,7 @@ import pt.amane.dscatalog.dtos.CategoryDTO;
 import pt.amane.dscatalog.entities.Category;
 import pt.amane.dscatalog.repositories.CategoryRepository;
 import pt.amane.dscatalog.services.exceptions.DataBaseIntegrityViolationException;
-import pt.amane.dscatalog.services.exceptions.ObjectNotFoundException;
+import pt.amane.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class CategoryService {
@@ -27,7 +27,7 @@ public class CategoryService {
 	@Transactional(readOnly = true)
 	public CategoryDTO findById(Long id) {
 		Optional<Category> obj = repository.findById(id);
-		Category cat = obj.orElseThrow(() -> new ObjectNotFoundException(
+		Category cat = obj.orElseThrow(() -> new ResourceNotFoundException(
 				"Object not found! Id: " + id + ", Type: " + Category.class.getName()));
 		return new CategoryDTO(cat);
 	}
@@ -54,7 +54,7 @@ public class CategoryService {
 			cat = repository.save(cat);
 			return new CategoryDTO(cat);
 		} catch (EntityNotFoundException e) {
-			throw new ObjectNotFoundException("Id not found! Id: " + id + ", Type: " + CategoryDTO.class.getName());
+			throw new ResourceNotFoundException("Id not found! Id: " + id + ", Type: " + CategoryDTO.class.getName());
 		}
 	}
 
@@ -62,7 +62,7 @@ public class CategoryService {
 		try {
 			repository.deleteById(id);
 		} catch (EmptyResultDataAccessException e) {
-			throw new ObjectNotFoundException("Id not found! Id: " + id);
+			throw new ResourceNotFoundException("Id not found! Id: " + id);
 		} catch (DataIntegrityViolationException e) {
 			throw new DataBaseIntegrityViolationException("category cannot be deleted! has associated object..");
 		}
